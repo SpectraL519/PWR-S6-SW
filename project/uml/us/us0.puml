@@ -1,0 +1,17 @@
+@startuml us0
+
+title Przypadek użycia 0: Zarządzanie procesem uprawy
+
+skinparam actorStyle awesome
+
+participant "System\nhydroponiczny" as System
+
+hnote over System: Włączenie systemu
+
+System -> System: **Akcja:** uruchom sieć lokalną
+System -> System: **Akcja:** aktywuj wszystkie czujniki i sprawdź ich stan
+loop Co 15 minut
+    System -> System: **Akcja:** rozpocznij okresowe sprawdzanie parametrów
+end
+
+@enduml

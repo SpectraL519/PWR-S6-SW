@@ -1,0 +1,42 @@
+@startuml us11
+
+title Przypadek użycia 11: Serwis/konserwacja systemu
+
+skinparam actorStyle awesome
+
+actor Użytkownik as User
+participant "System\nhydroponiczny" as System
+
+hnote over User
+    1. Wykryto problem techniczny
+    2. Rutynowa akcja serwisowa/konserwacyjna
+end hnote
+
+group Akcja serwisowa
+
+    hnote across
+        Uwierzytelnianie serwisanta
+        **Uwaga:** Odbywa się poprzez ręczne przesterowanie
+    end hnote
+
+    User -> System: **Żądanie:** wejdź w tryb konserwacyjny
+    System -> System: **Akcja:** wejdź w tryb konserwacyjny
+
+    hnote across
+        Przeprowadzenie akcji serwisowej
+        **Uwaga:** Kończy się ponownym uruchomieniem systemu
+    end hnote
+
+    System -> User: **Prompt:** potwierdzić status działań konserwacyjnych
+    alt Sukces
+        User -> System: **Response:** sukces
+        System -> System: **Akcja:** wyjdź z trybu konserwacyjnego
+        System -> System: **Akcja:** otwórz interfejs logowania
+    else Porażka
+        User -> System: **Response:** porażka
+        hnote over System: Przejdź do: **Akcja serwisowa**
+    end
+
+end
+
+@enduml

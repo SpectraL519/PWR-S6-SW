@@ -1,0 +1,46 @@
+@startuml states
+
+' TODO: refactor
+
+title Diagram stanów systemu hydroponicznego
+
+hide empty description
+
+state "System nieaktywny" as SystemNotActive
+state "System aktywny" as SystemActive : Wyświetlenie głównego\ninterfejsu systemu
+[*] -> SystemNotActive : [0]
+SystemNotActive --> SystemActive : [1] Uruchomienie
+
+state "Uruchomienie sieci lokalnej" as LocalNetworkLaunch : System wchodzi do stanu raz\nprzy uruchomieniu aplikacji
+LocalNetworkLaunch <- SystemActive : [2.1]
+LocalNetworkLaunch -> SystemActive : [2.2]
+
+
+state "Aktywacja czujników" as SensorsLaunch : System wchodzi do stanu raz\nprzy uruchomieniu aplikacji
+SystemActive ---> SensorsLaunch : [3.1]
+SensorsLaunch ---> SystemActive : [3.2] Poprawny stan\nczujników oraz\nsubstancji w zbiornikach
+
+state "Parowanie aplikacji" as AppPairing
+state "Konfiguracja parametrów" as ParamConfig
+state "Pomiar parametrów systemu" as ParamMeasurements
+state "Automatyczna regulacja\nparametrów systemu" as AutoParamRegulation
+state "Oczekiwanie" as WaitingP
+SystemActive -> AppPairing : [4.1] Wybór panelu\nparowania aplikacji
+AppPairing --> ParamConfig : [4.2]
+ParamConfig --> ParamMeasurements : [4.3] Zmiana\nkonfiguracji\nparametrów
+ParamMeasurements --> AutoParamRegulation : [4.4] Wykryto\nniepoprawny\nstan\nparametrów
+AutoParamRegulation --> WaitingP
+WaitingP --> ParamMeasurements : [4.5] Upłynął\nustawiony\nczas\noczekiwania
+
+state "Monitorowanie prognozy pogody" as WeatherForecastMonitoring
+state "Oczekiwanie" as WaitingW
+SystemActive ---> WeatherForecastMonitoring : [5.1]
+WeatherForecastMonitoring --> WaitingW : [5.2]
+WaitingW --> WeatherForecastMonitoring : [5.3] Upłynął\nustawiony czas\noczekiwania
+
+state "Akcja serwisowa" as MaintenanceAction
+SystemActive ---> MaintenanceAction : [6.1] Wykryto błąd\nsystemu lub\nrutynowa kontrola
+MaintenanceAction ---> SystemActive : [6.2] Pomyślna\nakcja serwisowa
+
+
+@enduml

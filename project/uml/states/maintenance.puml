@@ -1,0 +1,26 @@
+@startuml maintenance
+
+title Diagram stanów systemu hydroponicznego\nSerwis/konserwacja systemu
+
+hide empty description
+
+state "System aktywny" as SystemActive
+
+state "Akcja serwisowa" as MaintenanceAction {
+    state "Manualne przesterowanie" as Override
+    state "Tryb konserwacyjny" as MaintenanceMode
+    state "Prace konserwacyjne" as Maintenance
+    state "Potwierdzenie pomyslnego statusu\nprac konserwacyjnych" as StatusConfirmation
+
+    [*] -> Override
+    Override --> MaintenanceMode : Włączenie trybu\nkonserwacyjnego
+    MaintenanceMode --> Maintenance
+    Maintenance --> StatusConfirmation : Koniec prac\nkonserwacyjnych
+    StatusConfirmation -> SystemActive : TAK
+    StatusConfirmation --> MaintenanceMode : NIE
+}
+
+[*] --> SystemActive
+SystemActive --> MaintenanceAction : Wykrycie błędu w systemie\nlub rutynowa kontrola
+
+@enduml

@@ -1,0 +1,30 @@
+@startuml us6
+
+title Przypadek użycia 6: Automatyczna regulacja parametrów systemu
+
+skinparam actorStyle awesome
+
+participant "System\nhydroponiczny" as System
+actor Użytkownik as User
+
+hnote across: **PU2 & PU5:** Pomiar parametrów systemu
+
+System -> System: **Akcja:** przeanalizuj aktualne parametry systemu
+alt Niski poziom wody
+    System -> System: **Akcja:** podnieść poziom wody,\nkorzystając z wbudowanego zbiornika
+end
+alt Niski poziom minerałów
+    System -> System: **Akcja:** uzupełnij minerały w wodzie
+end
+alt Niski poziom napowietrzenia wody
+    System -> System: **Akcja:** rozpocznij napowietrzanie na czas\nproporcjonalny do zawartości tlenu w wodzie
+end
+alt Nieodpowiednia pozycja względem źródła światła
+    System -> System: **Akcja:** **[PU9]** wykonaj obrót, aby uzyskać\nnajlepszą pozycję w stosunku do źródła światła
+end
+alt Nieodpowiednia wilgotność powietrza i/lub poziom ""CO2""
+    System -> System: **Akcja:** włącz odpowiadający wskaźnik
+    System -> User: **Powiadomienie:** [wymagana akcja]\nNieodpowiednia wilgotność powietrza i/lub poziom ""CO2""
+end
+
+@enduml

@@ -1,0 +1,42 @@
+@startuml us10
+
+title Przypadek użycia 10: Konfiguracja parametrów systemu
+
+skinparam actorStyle awesome
+
+actor Użytkownik as User
+participant "System\nhydroponiczny" as System
+
+
+hnote across: Pomyślne uwierzytelnienie użytkownika
+
+group Parameter configuration
+    User -> System: **Żądanie:** otwórz interfejs wyboru parametrów
+    System -> System: **Akcja:** otwórz interfejs wyboru parametrów
+
+    loop
+        User -> System: **Żądanie:** wybierz parametr ""x""
+        System -> System: **Akcja:** otwórz interfejs konfiguracji parametru ""x""
+        User -> System: **Żądanie:** ustaw wartość parametru ""x"" na ""x-new""
+        System -> System: **Akcja:** tymczasowo ustaw\nwartość parametru ""x"" na ""x-new""
+        User -> System: **Żądanie:** wyjdź z interfejsu konfiguracji parametru ""x""
+        System -> User: **Prompt:** zapisz aktualną konfigurację parametru ""x""
+        alt TAK
+            User -> System: **Odpowiedź:** TAK
+            System -> System: **Akcja:** zapisz aktualną konfigurację parametru ""x""
+            System -> User: **Info:** operacja zakończona sukcesem
+        else NIE
+            User -> System: **Odpowiedź:** NIE
+            System -> System: **Akcja:** przywróć poprzednią konfigurację parametru ""x""
+            System -> User: **Info:** operacja zakończona porażką
+        end
+        System -> System: **Akcja:** otwórz interfejs wyboru parametrów
+    end
+
+    User -> System: **Żądanie:** wyjdź z interfejsu wyboru parametrów
+    System -> System: **Akcja:** otwórz główny interfejs aplikacji
+end
+
+hnote across: Pomyślne wylogowanie użytkownika
+
+@enduml

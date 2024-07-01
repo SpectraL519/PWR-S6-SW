@@ -1,0 +1,37 @@
+@startuml us1
+
+title Przypadek użycia 1: Uruchomienie systemu
+
+skinparam actorStyle awesome
+
+participant "System\nhydroponiczny" as System
+actor Użytkownik as User
+
+hnote over System: Włączenie systemu
+
+System -> System: **Akcja:** uruchom sieć lokalną
+group Parowanie aplikacji
+    User -> System: **Żądanie:** otwórz interfejs parowania aplikacji
+    System -> System: **Akcja:** otwórz interfejs parowania aplikacji
+
+    hnote across: Parowanie aplikacji za pomocą kodu QR
+end
+
+System -> System: **Akcja:** aktywuj wszystkie czujniki i sprawdź ich stan
+
+alt Status != poprawny
+    System -> System: **Akcja:** włącz wskaźnik nieprawidłowego stanu parametru
+    System -> User: **Powiadomienie:** [wymagana akcja]\nNiepoprawny stan parametru
+end
+
+System -> System: **Akcja:** sprawdź stan wody w zbiorniku oraz poziom\nsubstancji odżywczych w dyspenserach
+alt Niski poziom
+    System -> System: **Akcja:** włącz wskaźnik niskiego poziomu wody\ni/lub substancji odżywczych
+    System -> User: **Powiadomienie:** [wymagana akcja]\nNiski poziom wody i/lub substancji odżywczych
+end
+
+System -> User: **Powiadomienie:** [żądanie]\nWybierz rodzaj hodowanej rośliny
+hnote across: **PU10:** System parameter configuration
+System -> System: **Akcja:** rozpocznij okresowe sprawdzanie parametrów
+
+@enduml

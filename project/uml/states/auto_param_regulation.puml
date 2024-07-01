@@ -1,0 +1,45 @@
+@startuml auto_param_regulation
+
+title Diagram stanów systemu hydroponicznego\nAutomatyczna regulacja parametrów systemu
+
+hide empty description
+
+state "Pomiar parametrów systemu" as ParamMeasurements
+state "Oczekiwanie" as Waiting
+
+state "Automatyczna regulacja parametrów systemu" as AutoParamRegulation {
+    state InvalidParameterState <<fork>>
+    [*] --> InvalidParameterState
+
+    state ParameterStateCorrect <<join>>
+
+    state "Podniesianie poziomu wody" as WaterLevelRegulation
+    InvalidParameterState --> WaterLevelRegulation : Wykrycie niskiego\npoziomu wody
+    WaterLevelRegulation --> ParameterStateCorrect
+
+    state "Uzupełnianie minerałów w wodzie" as MineralLevelRegulation
+    InvalidParameterState --> MineralLevelRegulation : Wykrycie niskiego\npoziomu minerałów\nw wodzie
+    MineralLevelRegulation --> ParameterStateCorrect
+
+    state "Napowietrzanie wody" as WaterAerationRegulation
+    InvalidParameterState --> WaterAerationRegulation : Wykrycie niskiego poziomu\nnapowietrzenia wody
+    WaterAerationRegulation --> ParameterStateCorrect
+
+    state "Ustawianie pozycji\nwzględem źródła światła" as PositionRegulation
+    InvalidParameterState ---> PositionRegulation : Wykrycie nieodpowiedniej pozycji\nwzględem źródła światła
+    PositionRegulation ---> ParameterStateCorrect
+
+    state "Wysłanie powiadomienia sygnalizującego\nnieodpowiednią wilgotność powietrza\ni/lub poziom CO2" as AirCondNotification
+    InvalidParameterState ---> AirCondNotification : Wykrycie nieodpowiedniej wilgotności\npowietrza i/lub poziomu CO2
+    AirCondNotification ---> ParameterStateCorrect
+
+    ParameterStateCorrect --> Waiting
+}
+
+[*] --> ParamMeasurements
+ParamMeasurements --> AutoParamRegulation : Wykryty niepoprawny stan parametru
+ParamMeasurements <--- Waiting : Upłynął czas cyklicznego\npomiaru stanu parametrów
+
+' TODO: ustawianie parametrów
+
+@enduml

@@ -1,0 +1,53 @@
+@startuml use_case
+
+title Diagram przypadków użycia systemu hydroponicznego
+
+top to bottom direction
+skinparam actorStyle awesome
+
+actor User
+
+usecase "**PU1:** Uruchomienie systemu" as us1
+usecase "**PU10:** Konfiguracja\nparametrów systemu" as us10
+usecase "**PU11:** \nSerwis/konserwacja systemu" as us11
+
+usecase "Automatyczne działania systemu" as asa
+
+User -up-> us1 : Wykonuje
+User -left-> us10 : Wykonuje
+User -right-> us11 : Wykonuje
+User -down-> asa : Odbiera\npowiadomienia
+
+@enduml
+
+
+
+@startuml use_case_asa
+
+left to right direction
+
+package "Automatyczne działania systemu" as asa {
+    usecase "**PU2:** Pomiar\nparametrów systemu" as us2
+    usecase "**PU3:** Pomiar poziomu\nwody w systemie" as us3
+    usecase "**PU4:** Pomiar poziomu\n""CO2"", ""pH"", ""EC"" w systemie" as us4
+    usecase "**PU5:** Pomiar poziomu\nnasłonecznienia systemu" as us5
+    usecase "**PU6:** Automatyczna regulacja\nparametrów systemu" as us6
+    usecase "**PU7:** Analiza\nparametrów systemu" as us7
+    usecase "**PU8:** Ustawianie odpowiedniego\npoziomu wody w systemie" as us8
+    usecase "**PU9:** Ustawianie\npozycji systemu" as us9
+    usecase "**PU12:** Monitorowanie\nprognoz pogody" as us12
+}
+
+us2 -down-> us3 : Korzysta
+us2 -down-> us4 : Korzysta
+us2 -right-> us5 : Korzysta
+
+us6 -down-> us7 : Korzysta
+us6 -down-> us8 : Korzysta
+us6 -right-> us9 : Korzysta
+
+asa --> us2
+asa --> us12
+asa --> us6
+
+@enduml

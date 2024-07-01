@@ -1,0 +1,34 @@
+@startuml param_config
+
+title Diagram stanów systemu hydroponicznego\nKonfiguracja parametrów
+
+hide empty description
+
+state "System aktywny" as SystemActive : Wyświetlenie głównego\ninterfejsu systemu
+
+state "Konfiguracja parametrów" as ParamConfig {
+    state "Wybór parametrów" as ParamSelect : Wyświetlenie panelu\nwyboru parametrów
+    state "Konfiguracja X" as XParamConfig : Wyświetlenie panelu\nkonfiguracji parametru ""x""
+    state "Tymczasowa konfiguracja X" as TempXParamConfig : Przechowanie aktualnej oraz\npoprzedniej konfiguracji parametru ""x""
+    state ConfirmationCheck <<fork>>
+    state "Aktualizacja konfiguracji X" as XParamUpdate
+    state "Przywrócenie oryginalnej\nkonfiguracji X" as XParamReset
+
+    [*] -> ParamSelect
+    ParamSelect --> XParamConfig : Wybór parametru ""x""
+    XParamConfig --> TempXParamConfig : Zmiana konfiguracji\nparametru ""x""
+    TempXParamConfig --> ConfirmationCheck
+    ConfirmationCheck --> XParamUpdate : Zapisz
+    XParamUpdate --> ParamSelect
+    ConfirmationCheck --> XParamReset : Odrzuć
+    XParamReset --> ParamSelect
+}
+
+state "Pomiar parametrów systemu" as ParamMeasurements
+
+[*] -> SystemActive
+SystemActive --> ParamConfig : Wybór panelu\nkonfiguracji parametrów
+ParamConfig --> ParamMeasurements : Zmiana konfiguracji parametrów
+ParamMeasurements -> [*]
+
+@enduml

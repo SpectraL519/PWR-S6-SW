@@ -1,0 +1,49 @@
+@startuml sensors_launch
+
+title Diagram stanów systemu hydroponicznego\nAktywacja czujników
+
+hide empty description
+
+state "System aktywny" as SystemActive : Wyświetlenie głównego\ninterfejsu systemu
+[*] -> SystemActive
+
+state "Aktywacja czujników" as SensorsLaunch : System wchodzi do stanu raz\nprzy uruchomieniu aplikacji
+state "Sprawdzenie stanu czujników" as SensorsCheck
+state SensorsStatus <<fork>>
+state "Sygnalizacja niepoprawnego\nstanu czujników" as InvalidSensorsState
+InvalidSensorsState : - Włączenie indykatora
+InvalidSensorsState : - Wysłanie powiadomienia
+
+SystemActive -> SensorsLaunch
+SensorsLaunch -> SensorsCheck
+SensorsCheck --> SensorsStatus
+SensorsStatus --> InvalidSensorsState : Niepoprawny\nstan czujników
+
+state "Sprawdzenie poziomu\nwody w zbiorniku" as WaterLevelCheck
+state WaterLevelStatus <<fork>>
+state "Sygnalizacja niskiego\npoziom wody" as LowWaterLevel
+LowWaterLevel : - Włączenie indykatora
+LowWaterLevel : - Wysłanie powiadomienia
+
+WaterLevelCheck <- SensorsStatus : Poprawny\nstan czujników
+WaterLevelCheck --> WaterLevelStatus
+WaterLevelStatus --> LowWaterLevel : Niski\npoziom wody
+
+state "Sprawdzenie poziomu\nsubstancji odżywczych\nw dyspenserach" as NutrientsLevelCheck
+state NutrientsLevelStatus <<fork>>
+state "Sygnalizacja niskiego poziomu\nsubstancji odżywczych" as LowNutrientsLevel
+LowNutrientsLevel : - Włączenie indykatora
+LowNutrientsLevel : - Wysłanie powiadomienia
+
+NutrientsLevelCheck <- WaterLevelStatus : Wystarczający\npoziom wody
+NutrientsLevelCheck --> NutrientsLevelStatus
+NutrientsLevelStatus -> [*] : Wystarczający poziom\nsubstancji odżywczych
+NutrientsLevelStatus --> LowNutrientsLevel : Niski poziom\nsubstancji odżywczych
+
+state "Oczekiwanie na uzupełnienie\nodpowiednich zbiorników" as WaitingForContainerRefilling
+InvalidSensorsState ---> WaitingForContainerRefilling
+LowWaterLevel --> WaitingForContainerRefilling
+LowNutrientsLevel -> WaitingForContainerRefilling
+WaitingForContainerRefilling ---> [*] : Zbiorniki\nuzupełnione
+
+@enduml

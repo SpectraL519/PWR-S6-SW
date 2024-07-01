@@ -1,0 +1,19 @@
+@startuml us9
+
+title Przypadek użycia 9: Ustawianie pozycji systemu
+
+skinparam actorStyle awesome
+
+participant "System\nhydroponiczny" as System
+actor Użytkownik as User
+
+System -> System: **Akcja:** obliczyć kąt do przebycia\nna podstawie aktualnej i docelowej pozycji
+System -> System: **Akcja:** uruchom enkoder i silnik obrotowy\noraz wykonaj ruch o zakodowany kąt
+alt Enkoder nie rejestruje żadnych zmian
+    System -> System: **Akcja:** zatrzymaj proces obrotu
+    System -> System: **Akcja:** włącz odpowiadający wskaźnik
+    System -> User: **Powiadomienie:** [wymagana akcja]\nNie można ustawić odpowiedniej pozycji systemu
+end
+System -> System: **Akcja:** zapisz aktualną pozycję systemu
+
+@enduml

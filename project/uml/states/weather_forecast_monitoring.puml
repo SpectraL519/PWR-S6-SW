@@ -1,0 +1,42 @@
+@startuml weather_forecast_monitoring
+
+title Diagram stanów systemu hydroponicznego\nMonitorowanie prognozy pogody
+
+hide empty description
+
+state "Oczekiwanie" as Waiting
+
+state "Monitorowanie prognozy pogody" as WeatherForecastMonitoring {
+    state "Wysłanie rządania o pobranie\naktualnej prognozy pogody" as ForecastRequest
+
+    state "Ustawienie odpowiedniej\nflagi w systemie" as SetInvalidStateFlag
+    state "Włączenie odpowiedniego\nindykatora" as TurnOnInvalidStateIndicator
+
+    state "Wyłączenie odpowiedniej\nflagi w systemie" as UnsetInvalidStateFlag
+    state "Wyłącznie odpowiedniego\nindykatora" as TurnOffInvalidStateIndicator : Jeżeli indykator był włączony
+
+    state "Analiza aktualnej prognozy pogody" as ForecastAnalysis
+    state "Ustawienie domyślnego czasu\noczekiwania na ponowne sprawdzenie\nprognozy pogody" as SetDefaultWaitingTime
+    state "Ustawienie skróconego czasu\noczekiwania na ponowne sprawdzenie\nprognozy pogody" as SetShorterWaitingTime
+    state "Wysłanie powiadomienia o\nniesprzyjającej prognozie" as UnfavorableForecastNotification
+
+    [*] -> ForecastRequest
+
+    ForecastRequest --> SetInvalidStateFlag : Otrzymano odpowiedź z\nkodem ""porażka""
+    SetInvalidStateFlag --> TurnOnInvalidStateIndicator
+
+    ForecastRequest --> UnsetInvalidStateFlag : Otrzymano odpowiedź z\nkodem ""sukces"" oraz\naktualną prognozą
+    UnsetInvalidStateFlag --> TurnOffInvalidStateIndicator
+    TurnOffInvalidStateIndicator --> ForecastAnalysis
+    ForecastAnalysis --> SetDefaultWaitingTime : Prognoza\nsprzyjająca
+    SetDefaultWaitingTime --> Waiting
+    ForecastAnalysis --> SetShorterWaitingTime : Prognoza\nniesprzyjająca
+    SetShorterWaitingTime --> UnfavorableForecastNotification
+    UnfavorableForecastNotification --> Waiting
+}
+
+[*] --> WeatherForecastMonitoring
+
+Waiting --> WeatherForecastMonitoring : Upłynął ustawiony czas\noczekiwania na cykliczne\nsprawdzenie prognozy\npogody
+
+@enduml

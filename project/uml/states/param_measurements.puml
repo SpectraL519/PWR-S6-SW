@@ -1,0 +1,52 @@
+@startuml param_measurements
+
+title Diagram stanów systemu hydroponicznego\nPomiar parametrów systemu
+
+hide empty description
+
+state "Automatyczna regulacja parametrów systemu" as AutoParamRegulation
+state "Oczekiwanie" as Waiting
+
+state "Pomiar parametrów systemu" as ParamMeasurements {
+    state "Pomiar poziomu wody" as WaterLevelMeasurement
+    state "Pomiar poziomu CO2" as CO2LevelMeasurement
+    state "Pomiar poziomu pH, EC\ni elektrolitów w wodzie" as MineralLevelMeasurement
+    state "pomiar poziomu nasłonecznienia systemu" as SunlightLevelMeasurement
+
+    state BeginState <<fork>>
+    state EndState <<join>>
+
+    state "Ustawienie odpowiedniej\nflagi w systemie" as SetInvalidStateFlag
+    state "Włączenie odpowiedniego\nindykatora" as TurnOnInvalidStateIndicator
+
+    state "Wyłączenie odpowiedniej\nflagi w systemie" as UnsetInvalidStateFlag
+    state "Wyłącznie odpowiedniego\nindykatora" as TurnOffInvalidStateIndicator : Jeżeli indykator był włączony
+
+    [*] --> BeginState
+
+    BeginState --> WaterLevelMeasurement
+    BeginState --> CO2LevelMeasurement
+    BeginState --> MineralLevelMeasurement
+    BeginState --> SunlightLevelMeasurement
+
+    WaterLevelMeasurement --> EndState
+    CO2LevelMeasurement --> EndState
+    MineralLevelMeasurement  --> EndState
+    SunlightLevelMeasurement --> EndState
+
+    EndState --> UnsetInvalidStateFlag : Wykryto poprawny\nstan parametru
+    UnsetInvalidStateFlag --> TurnOffInvalidStateIndicator
+
+    EndState --> SetInvalidStateFlag : Wykryto niepoprawny\nstan parametru
+    SetInvalidStateFlag --> TurnOnInvalidStateIndicator
+    TurnOnInvalidStateIndicator --> AutoParamRegulation
+}
+
+[*] --> ParamMeasurements
+
+AutoParamRegulation --> Waiting
+Waiting --> ParamMeasurements : Upłynął czas oczekiwania\nna cykliczny pomiar\nstanu parametrów
+
+' TODO: ustawianie parametrów
+
+@enduml

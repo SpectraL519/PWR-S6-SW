@@ -1,0 +1,29 @@
+@startuml us2
+
+title Przypadek użycia 2: Pomiar parametrów systemu
+
+skinparam actorStyle awesome
+
+participant "System\nhydroponiczny" as System
+actor Użytkownik as User
+
+System -> System: **Akcja:** zmierz pozio wody
+alt Błąd pomiaru
+    System -> System: **Akcja:** włącz odpowiadający wskaźnik
+    System -> User: **Powiadomienie:** [wymagana akcja]\nNie można zmierzyć poziomu wody
+end
+System -> System: **Akcja:** zmierz poziom ""CO2""
+alt Błąd pomiaru
+    System -> System: **Akcja:** włącz odpowiadający wskaźnik
+    System -> User: **Powiadomienie:** [wymagana akcja]\nNie można zmierzyć poziomu ""CO2""
+end
+System -> System: **Akcja:** zmierz poziom ""pH"", ""EC"" i elektrolitów w wodzie
+alt Błąd pomiaru
+    System -> System: **Akcja:** włącz odpowiadający wskaźnik
+    System -> User: **Powiadomienie:** [wymagana akcja]\nNie można zmierzyć poziomu ""pH"", ""EC"" i elektrolitów
+end
+System -> System: **Akcja:** zapisz pobrane pomiary
+System -> User: **Powiadomienie:** [system info]\nAktualny status parametrów systemu
+hnote across: **PU6:** Regulacja parametrów systemu
+
+@enduml

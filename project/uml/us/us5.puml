@@ -1,0 +1,18 @@
+@startuml us5
+
+title Przypadek użycia 5: Pomiar poziomu nasłonecznienia systemu
+
+skinparam actorStyle awesome
+
+participant "System\nhydroponiczny" as System
+actor Użytkownik as User
+
+System -> System: **Akcja:** pobierz dane z fotorezystorów\numieszczonych wokół systemu
+alt Pomiar skrajny
+    System -> System: **Akcja:** włącz odpowiadający wskaźnik
+    System -> User: **Powiadomienie:** [wymagana akcja]\nFotorezystor wykonał skrajny pomiar
+end
+System -> System: **Akcja:** zmierz intensywność światła słonecznego\nw oparciu o ustawione progi dla każdego fotorezystora
+System -> System: **Akcja:** oblicz aktualne skumulowane natężenie\nświatła słonecznego na podstawie aktualnych\noraz i kilku wcześniejszych pomiarów
+
+@enduml

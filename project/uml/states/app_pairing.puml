@@ -1,0 +1,23 @@
+@startuml app_pairing
+
+title Diagram stanów systemu hydroponicznego\nParowanie aplikacji
+
+hide empty description
+
+state "System aktywny" as SystemActive : Wyświetlenie głównego\ninterfejsu systemu
+state "Uruchomienie sieci lokalnej" as NetworkLaunch
+
+state "Parowanie aplikacji" as AppPairing {
+    state "Oczekiwanie na parowanie" as QRPanel : Wyświetlenie panelu z kodem QR
+    state "Aplikacja sparowana" as AppPaired
+
+    [*] -> QRPanel
+    QRPanel --> AppPaired : Otrzymanie sygnału\nz kodem ""sukces""
+}
+
+[*] -> SystemActive
+SystemActive -> NetworkLaunch
+NetworkLaunch --> AppPairing : Wybranie panelu\nparowania
+AppPaired --> SystemActive
+
+@enduml

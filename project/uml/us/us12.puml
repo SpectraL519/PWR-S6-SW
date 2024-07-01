@@ -1,0 +1,34 @@
+@startuml us12
+
+title Przypadek użycia 12: Monitorowanie prognoz pogody
+
+skinparam actorStyle awesome
+
+actor Użytkownik as User
+participant "System\nhydroponiczny" as System
+participant "Weather forecast API" as Wapi
+
+hnote over System
+    **Powiadomienie wewnętrzne:**
+    Wymagane okresowe sprawdzanie prognozy pogody
+end hnote
+
+group Sprawdzanie prognozy pogody
+
+    System -> Wapi: **Żądanie:** pobierz aktualną prognozę pogody
+    alt Sukces
+        Wapi -> System: **Response:** sukces
+        System -> System: **Akcja:** analizuj pobraną prognozę pogody
+        alt Prognoza korzystna
+            System -> System: **Akcja:** ustaw następny czas sprawdzania prognozy\npogody z domyślnym okresem oczekiwania
+        else Prognoza niekorzystna
+            System -> User: **Powiadomienie:** [wymagana akcja]\nAktualna prognoza pogody jest niekorzystna
+            System -> System: **Akcja:** ustaw następny czas sprawdzania prognozy\npogody ze skróconym okresem oczekiwania
+        end
+    else Porażka
+        Wapi -> System: **Response:** błąd
+        System -> User: **Powiadomienie:** [wymagana akcja]\nNie mozna pobrać akutalnej prognozy pogody
+    end
+end
+
+@enduml
